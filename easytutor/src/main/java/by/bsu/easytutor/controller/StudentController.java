@@ -3,6 +3,8 @@ package by.bsu.easytutor.controller;
 import by.bsu.easytutor.dao.DAOFactory;
 import by.bsu.easytutor.entity.Course;
 import by.bsu.easytutor.service.StudentService;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,8 +18,9 @@ public class StudentController {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "abcd1234";
 
-    @RequestMapping("/")
-    public String index() throws Exception{
+    @RequestMapping(value = "/students/{id}/courses")
+    @ResponseBody
+    public String index(@PathVariable("id") long id) throws Exception{
         Class.forName("com.mysql.jdbc.Driver");
 
         Connection connection = DriverManager.getConnection(DATABASE, USERNAME, PASSWORD);
@@ -26,9 +29,9 @@ public class StudentController {
 
         StudentService studentService = new StudentService(daoFactory);
 
-        List<Course> courses = studentService.getCourses(1);
+        List<Course> courses = studentService.getCourses(id);
 
-        String html = "<table><thead><tr><th>Id</th><th>Name</th></tr><tbody>";
+        String html = "<table><thead><tr><th>Id</th><th>Name</th></tr></tbody>";
         for (Course course : courses) {
             html += "<tr><td>" + course.getId() + "</td><td>" + course.getName() + "</td></tr>";
         }
