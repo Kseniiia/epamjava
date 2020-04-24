@@ -1,6 +1,5 @@
 package by.bsu.easytutor.controller;
 
-import by.bsu.easytutor.dao.StudentDAO;
 import by.bsu.easytutor.entity.Course;
 import by.bsu.easytutor.service.StudentService;
 import org.springframework.web.bind.annotation.PathVariable;
