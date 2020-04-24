@@ -12,15 +12,22 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StudentService {
+
+    @Autowired
+    private StudentDAO studentDAO;
+
+    @Autowired
+    private CourseDAO courseDAO;
+
     private final Logger logger = LogManager.getLogger();
 
     public void addToCourse(long studentId, long courseId) throws Exception, SQLException {
         logger.info("Add student to course");
-
-        StudentDAO studentDAO = new StudentDAO();
-        CourseDAO courseDAO = new CourseDAO();
 
         Student student = studentDAO.get(studentId).orElseThrow(() -> new NoSuchElementException("No student with id: " + studentId));
         Course course = courseDAO.get(courseId).orElseThrow(() -> new NoSuchElementException("No course with id: " + courseId));
@@ -30,9 +37,6 @@ public class StudentService {
 
     public List<Course> getCourses(long studentId) throws Exception {
         logger.info("Add course");
-
-        StudentDAO studentDAO = new StudentDAO();
-        CourseDAO courseDAO = new CourseDAO();
 
         Student student = studentDAO.get(studentId).orElseThrow(() -> new NoSuchElementException("No student with id: " + studentId));
 
