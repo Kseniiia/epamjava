@@ -1,34 +1,31 @@
 package by.bsu.easytutor.service;
 
 import by.bsu.easytutor.dao.CourseDAO;
-import by.bsu.easytutor.dao.DAOFactory;
 import by.bsu.easytutor.dao.StudentDAO;
 import by.bsu.easytutor.entity.Course;
 import by.bsu.easytutor.entity.Student;
 
+import java.net.CookieHandler;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 
 public class StudentService {
     private final Logger logger = LogManager.getLogger();
 
-    private DAOFactory daoFactory;
-
-    public StudentService(DAOFactory daoFactory) {
-        this.daoFactory = daoFactory;
-    }
-
     public void addToCourse(long studentId, long courseId) throws Exception, SQLException {
         logger.info("Add student to course");
 
-        StudentDAO studentDAO = daoFactory.getStudentDAO();
-        CourseDAO courseDAO = daoFactory.getCourseDAO();
+        StudentDAO studentDAO = new StudentDAO();
+        CourseDAO courseDAO = new CourseDAO();
 
-        Student student = studentDAO.get(studentId);
-        Course course = courseDAO.get(courseId);
+        Student student = studentDAO.get(studentId).orElseThrow(() -> new NoSuchElementException("No student with id: " + studentId));
+        Course course = courseDAO.get(courseId).orElseThrow(() -> new NoSuchElementException("No course with id: " + courseId));
 
         if (student == null) throw new Exception("Student doesn't exist.");
         if (course == null) throw new Exception("Course doesn't exist.");
@@ -38,10 +35,11 @@ public class StudentService {
 
     public List<Course> getCourses(long studentId) throws Exception {
         logger.info("Add course");
-        CourseDAO courseDAO = daoFactory.getCourseDAO();
-        StudentDAO studentDAO = daoFactory.getStudentDAO();
 
-        Student student = studentDAO.get(studentId);
+        StudentDAO studentDAO = new StudentDAO();
+        CourseDAO courseDAO = new CourseDAO();
+
+        Student student = studentDAO.get(studentId).orElseThrow(() -> new NoSuchElementException("No student with id: " + studentId));
 
         if (student == null) throw new Exception("Student doesn't exist.");
 

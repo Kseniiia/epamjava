@@ -3,73 +3,52 @@ package by.bsu.easytutor.dao;
 import by.bsu.easytutor.entity.Course;
 import by.bsu.easytutor.entity.Student;
 import by.bsu.easytutor.entity.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
+@Repository
 public class StudentDAO {
-    private Connection connection;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM Users LEFT JOIN Students ON (id = user_id) WHERE id = ?";
     private static final String SQL_INSERT_USER = "INSERT INTO Users VALUES (NULL, ?, ?, ?, ?)";
-    private static final String SQL_INSERT_STUDENT = "INSERT INTO Students VALUES (?, ?)";
+    private static final String SQL_INSERT_STUDENT = "INSERT INTO Students VALUES ((SELECT id FROM USERS WHERE login = ?), ?)";
     private static final String SQL_INSERT_STUDENT_COURSE = "INSERT INTO StudentsCourses VALUES (?, ?)";
+    private static final String SQL_UPDATE_USER = "UPDATE USERS SET login = ?, password = ?, name = ?, email = ? WHERE id = ?";
+    private static final String SQL_UPDATE_STUDENT = "UPDATE STUDENTS SET age = ? WHERE user_id = ?";
+    private static final String SQL_DELETE_USER = "DELETE FROM Users WHERE id = ?";
 
-    public StudentDAO(Connection connection) {
-        this.connection = connection;
+
+    public Optional<Student> get(long id) {
+        return jdbcTemplate.queryForObject(SQL_SELECT_BY_ID, new Object[]{id}, (rs, rowNumber) -> Optional.of(buildStudent(rs)));
     }
 
-    public Student get(long id) throws SQLException {
-        Student student = null;
-
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_BY_ID);
-        preparedStatement.setLong(1, id);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        if (resultSet.next()) {
-            student = buildStudent(resultSet);
-        }
-
-        return student;
+    public boolean save(Student student) {
+        return jdbcTemplate.update(SQL_INSERT_USER, student.getLogin(), student.getPassword(), student.getName(), student.getEmail()) > 0
+        && jdbcTemplate.update(SQL_INSERT_STUDENT, student.getLogin(), student.getAge()) > 0;
     }
 
-    public void save(Student student) throws SQLException {
-        try {
-            connection.setAutoCommit(false);
-
-            PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_USER, PreparedStatement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, student.getLogin());
-            preparedStatement.setString(2, student.getPassword());
-            preparedStatement.setString(3, student.getName());
-            preparedStatement.setString(4, student.getEmail());
-            preparedStatement.executeUpdate();
-
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
-            if (resultSet.next()) {
-                student.setId(resultSet.getLong(1));
-            }
-
-            preparedStatement = connection.prepareStatement(SQL_INSERT_STUDENT);
-            preparedStatement.setLong(1, student.getId());
-            preparedStatement.setInt(2, student.getAge());
-            preparedStatement.executeUpdate();
-
-            connection.commit();
-        } catch (SQLException e) {
-            connection.rollback();
-        }
+    public boolean addToCourse(Student student, Course course) {
+        return jdbcTemplate.update(SQL_INSERT_STUDENT_COURSE, student.getId(), course.getId()) > 0;
     }
 
-    public void addToCourse(Student student, Course course) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_STUDENT_COURSE);
-        preparedStatement.setLong(1, student.getId());
-        preparedStatement.setLong(2, course.getId());
-        preparedStatement.executeUpdate();
+    public boolean update(Student student) {
+        return jdbcTemplate.update(SQL_UPDATE_USER, student.getLogin(), student.getPassword(), student.getName(), student.getEmail(), student.getId()) > 0
+                && jdbcTemplate.update(SQL_UPDATE_STUDENT, student.getAge(), student.getId()) > 0;
+    }
+
+    public boolean delete(Student student) {
+        return jdbcTemplate.update(SQL_DELETE_USER, student.getId()) > 0;
     }
 
     private Student buildStudent(ResultSet resultSet) throws SQLException {

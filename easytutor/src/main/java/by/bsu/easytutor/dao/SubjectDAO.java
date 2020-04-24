@@ -1,55 +1,34 @@
 package by.bsu.easytutor.dao;
 
 import by.bsu.easytutor.entity.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+@Repository
 public class SubjectDAO {
-    private Connection connection;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_SELECT_BY_ID = "SELECT * FROM Subjects WHERE id = ?";
     private static final String SQL_INSERT = "INSERT INTO Subjects VALUES (NULL, ?)";
     private static final String SQL_DELETE = "DELETE FROM Subjects WHERE id = ?";
 
-    public SubjectDAO(Connection connection) {
-        this.connection = connection;
+    public Optional<Subject> get(long id) {
+        return jdbcTemplate.queryForObject(SQL_SELECT_BY_ID, new Object[]{id}, (rs, rowNumber) -> Optional.of(buildSubject(rs)));
     }
 
-    public Subject get(long id) throws SQLException {
-        Subject subject = null;
-
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_BY_ID);
-        preparedStatement.setLong(1, id);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        if (resultSet.next()) {
-            subject = buildSubject(resultSet);
-        }
-
-        return subject;
+    public boolean save(Subject subject) {
+        return jdbcTemplate.update(SQL_INSERT, subject.getName()) > 0;
     }
 
-    public void save(Subject subject) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT, PreparedStatement.RETURN_GENERATED_KEYS);
-        preparedStatement.setString(1, subject.getName());
-        preparedStatement.executeUpdate();
-
-        ResultSet resultSet = preparedStatement.getGeneratedKeys();
-
-        if (resultSet.next()) {
-            subject.setId(resultSet.getLong(1));
-        }
-    }
-
-    public void delete(Subject subject) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_DELETE);
-        preparedStatement.setLong(1, subject.getId());
-        preparedStatement.executeUpdate();
+    public boolean delete(Subject subject) {
+        return jdbcTemplate.update(SQL_DELETE, subject.getId()) > 0;
     }
 
 

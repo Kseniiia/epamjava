@@ -3,6 +3,9 @@ package by.bsu.easytutor.dao;
 import by.bsu.easytutor.entity.Course;
 import by.bsu.easytutor.entity.Subject;
 import by.bsu.easytutor.entity.Teacher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,9 +13,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Repository
 public class CourseDAO {
-    private Connection connection;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     private static final String SQL_SELECT_BY_ID = "SELECT * " +
                                                    "FROM Courses c " +
@@ -28,38 +35,12 @@ public class CourseDAO {
                                                              "LEFT JOIN Subjects s ON (c.subject_id = s.id) " +
                                                            "WHERE c.id IN (SELECT course_id FROM StudentsCourses WHERE student_id = ?)";
 
-    public CourseDAO(Connection connection) {
-        this.connection = connection;
-    }
-
-    public Course get(long id) throws SQLException {
-        Course course = null;
-
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_BY_ID);
-        preparedStatement.setLong(1, id);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        if (resultSet.next()) {
-            course = buildCourse(resultSet);
-        }
-
-        return course;
+    public Optional<Course> get(long id) {
+        return jdbcTemplate.queryForObject(SQL_SELECT_BY_ID, new Object[]{id}, (rs, rowNumber) -> Optional.of(buildCourse(rs)));
     }
 
     public List<Course> getByStudentId(long studentId) throws SQLException {
-        List<Course> courses = new ArrayList<Course>();
-
-        PreparedStatement preparedStatement = connection.prepareStatement(SQL_SELECT_BY_STUDENT_ID);
-        preparedStatement.setLong(1, studentId);
-
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        while (resultSet.next()) {
-            courses.add(buildCourse(resultSet));
-        }
-
-        return courses;
+        return jdbcTemplate.query(SQL_SELECT_BY_STUDENT_ID, new Object[]{studentId}, (rs, rowNumber) -> buildCourse(rs));
     }
 
     private Course buildCourse(ResultSet resultSet) throws SQLException {
