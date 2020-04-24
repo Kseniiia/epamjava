@@ -32,3 +32,4 @@ public class StudentController {
         return html;
     }
 }
+
