@@ -32,12 +32,18 @@ public class CourseDAO {
                                                              "LEFT JOIN Subjects s ON (c.subject_id = s.id) " +
                                                            "WHERE c.id IN (SELECT course_id FROM StudentsCourses WHERE student_id = ?)";
 
+    private static final String SQL_INSERT_COURSE = "INSERT INTO Courses VALUES(NULL, ?, ? ?)";
+
     public Optional<Course> get(long id) {
         return jdbcTemplate.queryForObject(SQL_SELECT_BY_ID, new Object[]{id}, (rs, rowNumber) -> Optional.of(buildCourse(rs)));
     }
 
-    public List<Course> getByStudentId(long studentId) throws SQLException {
+    public List<Course> getByStudentId(long studentId) {
         return jdbcTemplate.query(SQL_SELECT_BY_STUDENT_ID, new Object[]{studentId}, (rs, rowNumber) -> buildCourse(rs));
+    }
+
+    public boolean save(Course course) {
+        return jdbcTemplate.update(SQL_INSERT_COURSE, course.getName(), course.getTeacher().getId(), course.getSubject().getId()) > 0;
     }
 
     private Course buildCourse(ResultSet resultSet) throws SQLException {
