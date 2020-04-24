@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import by.bsu.easytutor.form.StudentForm;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +36,27 @@ public class StudentService {
         studentDAO.addToCourse(student, course);
     }
 
-    public List<Course> getCourses(long studentId) throws Exception {
+    public List<Course> getCourses(long studentId) {
         logger.info("Add course");
 
         Student student = studentDAO.get(studentId).orElseThrow(() -> new NoSuchElementException("No student with id: " + studentId));
 
         return courseDAO.getByStudentId(studentId);
+    }
+
+    public void createStudent(Student student) {
+        logger.info("Create student");
+
+        if (!studentDAO.save(student)) {
+            throw new IllegalArgumentException("Student can not be created");
+        }
+    }
+
+    public void createStudent(StudentForm studentForm) {
+        logger.info("Create student");
+
+        if (!studentDAO.save(studentForm)) {
+            throw new IllegalArgumentException("Student can not be created");
+        }
     }
 }

@@ -1,13 +1,14 @@
 package by.bsu.easytutor.controller;
 
 import by.bsu.easytutor.entity.Course;
+import by.bsu.easytutor.entity.Student;
+import by.bsu.easytutor.form.StudentForm;
 import by.bsu.easytutor.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +27,17 @@ public class StudentController {
         model.addAttribute("courses", courses);
 
         return "studentCourses";
+    }
+
+    @PostMapping("/student")
+    @ResponseBody
+    public ResponseEntity<Object> create(@RequestBody StudentForm student) {
+        try{
+            studentService.createStudent(student);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
 

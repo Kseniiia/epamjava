@@ -2,6 +2,7 @@ package by.bsu.easytutor.dao;
 
 import by.bsu.easytutor.entity.Course;
 import by.bsu.easytutor.entity.Student;
+import by.bsu.easytutor.form.StudentForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -45,6 +46,11 @@ public class StudentDAO {
 
     public boolean delete(Student student) {
         return jdbcTemplate.update(SQL_DELETE_USER, student.getId()) > 0;
+    }
+
+    public boolean save(StudentForm studentForm) {
+        return jdbcTemplate.update(SQL_INSERT_USER, studentForm.getLogin(), studentForm.getPassword(), studentForm.getName(), studentForm.getEmail()) > 0
+                && jdbcTemplate.update(SQL_INSERT_STUDENT, studentForm.getLogin(), studentForm.getAge()) > 0;
     }
 
     private Student buildStudent(ResultSet resultSet) throws SQLException {
