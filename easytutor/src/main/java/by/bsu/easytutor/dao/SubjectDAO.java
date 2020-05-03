@@ -1,6 +1,8 @@
 package by.bsu.easytutor.dao;
 
 import by.bsu.easytutor.entity.Subject;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,16 +13,25 @@ import java.util.Optional;
 
 @Repository
 public class SubjectDAO {
+    @Autowired
+    private SessionFactory sessionFactory;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private static final String SQL_SELECT_BY_ID = "SELECT * FROM Subjects WHERE id = ?";
     private static final String SQL_INSERT = "INSERT INTO Subjects VALUES (NULL, ?)";
     private static final String SQL_DELETE = "DELETE FROM Subjects WHERE id = ?";
 
-    public Optional<Subject> get(long id) {
-        return jdbcTemplate.queryForObject(SQL_SELECT_BY_ID, new Object[]{id}, (rs, rowNumber) -> Optional.of(buildSubject(rs)));
+    public Subject get(long id) {
+        Session session = null;
+        try {
+            session = sessionFactory.openSession();
+            return session.get(Subject.class, id);
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
     public boolean save(Subject subject) {
@@ -29,15 +40,5 @@ public class SubjectDAO {
 
     public boolean delete(Subject subject) {
         return jdbcTemplate.update(SQL_DELETE, subject.getId()) > 0;
-    }
-
-
-    private Subject buildSubject(ResultSet resultSet) throws SQLException {
-        Subject subject = new Subject();
-
-        subject.setId(resultSet.getLong("id"));
-        subject.setName(resultSet.getString("name"));
-
-        return subject;
     }
 }
