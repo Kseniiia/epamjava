@@ -19,7 +19,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource());
-        sessionFactoryBean.setPackagesToScan("by.bsu.easytutor.beans");
+        sessionFactoryBean.setPackagesToScan("by.bsu.easytutor.entity");
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         return sessionFactoryBean;
     }
@@ -27,7 +27,7 @@ public class HibernateConfig {
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://localhost/easytutor");
         dataSource.setUsername("root");
         dataSource.setPassword("abcd1234");
