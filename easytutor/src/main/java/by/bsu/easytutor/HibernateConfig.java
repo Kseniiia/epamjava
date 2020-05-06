@@ -3,6 +3,7 @@ package by.bsu.easytutor;
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,15 +23,18 @@ public class HibernateConfig {
         sessionFactoryBean.setPackagesToScan("by.bsu.easytutor.beans");
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         return sessionFactoryBean;
-    }
+    };
 
     @Bean
     public DataSource dataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://localhost/easytutor");
         dataSource.setUsername("root");
         dataSource.setPassword("abcd1234");
+        dataSource.setUrl(
+                "jdbc:mysql://localhost:3306/easytutor?serverTimezone=UTC");
+
         return dataSource;
     }
 

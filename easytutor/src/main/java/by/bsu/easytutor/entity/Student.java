@@ -1,6 +1,14 @@
 package by.bsu.easytutor.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "Students")
 public class Student extends User {
+
+    @Column(name = "age")
     private int age;
 
     public Student() {}

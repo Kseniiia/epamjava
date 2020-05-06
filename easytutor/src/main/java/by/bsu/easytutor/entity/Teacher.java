@@ -1,8 +1,21 @@
 package by.bsu.easytutor.entity;
 
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Table(name = "Teachers")
 public class Teacher extends User {
+
+    @Column(name = "education")
     private String education;
+
+    @Column(name = "experience")
     private String experience;
+
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
+    private List<Course> courses;
 
     public Teacher() {}
 

@@ -1,10 +1,27 @@
 package by.bsu.easytutor.entity;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+@Table(name = "Users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
+
+    @Column(name = "login")
     protected String login;
+
+    @Column(name = "password")
     protected String password;
+
+    @Column(name = "name")
     protected String name;
+
+    @Column(name = "email")
     protected String email;
 
     public Long getId() {
@@ -45,5 +62,18 @@ public abstract class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return email.equals(user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 }

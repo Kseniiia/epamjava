@@ -1,9 +1,26 @@
 package by.bsu.easytutor.entity;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+@Table(name = "Courses")
 public class Course {
+
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "name")
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
+
+    @ManyToOne
+    @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
 
     public Course() {}
@@ -54,5 +71,20 @@ public class Course {
                 ", teacher=" + teacher +
                 ", subject=" + subject +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return name.equals(course.name) &&
+                teacher.equals(course.teacher) &&
+                subject.equals(course.subject);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, teacher, subject);
     }
 }
