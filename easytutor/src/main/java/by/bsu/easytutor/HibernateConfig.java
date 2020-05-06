@@ -20,7 +20,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource());
-        sessionFactoryBean.setPackagesToScan("by.bsu.easytutor.beans");
+        sessionFactoryBean.setPackagesToScan("by.bsu.easytutor.entity");
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         return sessionFactoryBean;
     };
