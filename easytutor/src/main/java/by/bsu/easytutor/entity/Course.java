@@ -1,11 +1,12 @@
 package by.bsu.easytutor.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "Courses")
-public class Course {
+public class Course implements Serializable {
 
     @Id
     @Column(name = "id")
