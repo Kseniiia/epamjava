@@ -1,10 +1,13 @@
 package by.bsu.easytutor.entity;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
+@Audited
 @Table(name = "Courses")
 public class Course implements Serializable {
 

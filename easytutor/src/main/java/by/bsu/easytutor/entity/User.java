@@ -1,9 +1,12 @@
 package by.bsu.easytutor.entity;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Audited
 @Table(name = "Users")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
