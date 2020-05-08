@@ -1,10 +1,13 @@
 package by.bsu.easytutor.entity;
 
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Audited
 @Table(name = "Teachers")
 public class Teacher extends User {
 

@@ -1,5 +1,7 @@
 package by.bsu.easytutor.entity;
 
+import org.hibernate.envers.Audited;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -7,6 +9,7 @@ import javax.persistence.Table;
 import java.util.List;
 
 @Entity
+@Audited
 @Table(name = "Students")
 public class Student extends User{
 
