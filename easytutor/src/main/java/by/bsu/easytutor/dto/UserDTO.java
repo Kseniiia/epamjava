@@ -1,11 +1,22 @@
-package by.bsu.easytutor.form;
+package by.bsu.easytutor.dto;
 
-public class StudentForm {
-    private String login;
-    private String password;
-    private String name;
-    private String email;
-    private int age;
+import java.io.Serializable;
+
+public class UserDTO implements Serializable {
+
+    protected long id;
+    protected String login;
+    protected String password;
+    protected String name;
+    protected  String email;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getLogin() {
         return login;
@@ -37,13 +48,5 @@ public class StudentForm {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 }

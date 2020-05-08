@@ -19,8 +19,6 @@ public class CourseService {
     public void createCourse(Course course) {
         logger.info("Create course");
 
-        if (!courseDAO.save(course)) {
-            throw new IllegalArgumentException();
-        }
+        courseDAO.save(course);
     }
 }

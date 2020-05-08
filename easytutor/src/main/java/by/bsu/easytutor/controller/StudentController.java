@@ -1,8 +1,7 @@
 package by.bsu.easytutor.controller;
 
 import by.bsu.easytutor.entity.Course;
-import by.bsu.easytutor.entity.Student;
-import by.bsu.easytutor.form.StudentForm;
+import by.bsu.easytutor.dto.StudentDTO;
 import by.bsu.easytutor.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,7 @@ public class StudentController {
 
     @PostMapping("/student")
     @ResponseBody
-    public ResponseEntity<Object> create(@RequestBody StudentForm student) {
+    public ResponseEntity<Object> create(@RequestBody StudentDTO student) {
         try{
             studentService.createStudent(student);
             return ResponseEntity.ok().build();

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public class AbstractDAO <T extends Serializable> {
     private Class<T> clazz;
@@ -17,10 +19,11 @@ public class AbstractDAO <T extends Serializable> {
         clazz = clazzToSet;
     }
 
-    public T findOne(long id) {
-        return (T) getCurrentSession().get( clazz, id );
+    public Optional<T>  get(long id) {
+        return Optional.of(getCurrentSession().get( clazz, id ));
     }
-    public List< T > findAll() {
+
+    public List< T > getAll() {
         return getCurrentSession()
                 .createQuery( "from " + clazz.getName() ).list();
     }
@@ -36,8 +39,9 @@ public class AbstractDAO <T extends Serializable> {
     public void delete(T entity) {
         getCurrentSession().delete( entity );
     }
+
     public void deleteById(long id) {
-        final T entity = findOne( id);
+        final T entity = get(id).orElseThrow(() -> new NoSuchElementException(""));
         delete( entity );
     }
 

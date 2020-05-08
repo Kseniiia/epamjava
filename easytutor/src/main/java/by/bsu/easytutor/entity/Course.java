@@ -2,6 +2,7 @@ package by.bsu.easytutor.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -16,13 +17,16 @@ public class Course implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "teacher_id", nullable = false)
     private Teacher teacher;
 
     @ManyToOne
     @JoinColumn(name = "subject_id", nullable = false)
     private Subject subject;
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<StudentCourse> studentCourses;
 
     public Course() {}
 

@@ -2,14 +2,19 @@ package by.bsu.easytutor.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "Students")
-public class Student extends User {
+public class Student extends User{
 
     @Column(name = "age")
     private int age;
+
+    @OneToMany(mappedBy = "student")
+    private List<StudentCourse> studentCourses;
 
     public Student() {}
 
